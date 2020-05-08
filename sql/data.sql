@@ -92,3 +92,14 @@ VALUES
   (6, 1),
   (6, 2),
   (6, 3);
+
+  INSERT INTO `Bookings`(
+    `name`,
+    `email`,
+    `checkin`,
+    `checkout`,
+    `roomId`
+  )
+VALUES
+  ('Juan Roman', 'jd@scala.com', '2008-01-01 00:00:01', '2008-01-01 00:00:01',1),
+  ('Diego Maradona', 'dm@scala.com', '2008-01-01 00:00:01', '2008-01-01 00:00:01',2);

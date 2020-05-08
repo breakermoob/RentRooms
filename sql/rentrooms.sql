@@ -63,8 +63,24 @@ CREATE TABLE IF NOT EXISTS `Locations` (
   `longitude` DOUBLE NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
+--
+-- Estructura de tabla para la tabla `Bookings`
+--
+CREATE TABLE IF NOT EXISTS `Bookings` (
+  `id` INT(50) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `checkin` TIMESTAMP NOT NULL,
+  `checkout` TIMESTAMP NOT NULL,
+  `roomId` INT(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB DEFAULT CHARSET = latin1;
+--
 -- Filtros para las tablas
 --
+ALTER TABLE `Bookings`
+ADD
+  CONSTRAINT `Bookings_fk0` FOREIGN KEY (`roomId`) REFERENCES `Rooms`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `Room_Images`
 ADD
   CONSTRAINT `Room_Images_fk0` FOREIGN KEY (`roomId`) REFERENCES `Rooms`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

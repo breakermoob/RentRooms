@@ -87,10 +87,60 @@ class RoomController @Inject()(db: Database,cc: ControllerComponents) extends Ab
   
   //Service to search rooms available
   def detail(id: Long) = Action { implicit request: Request[AnyContent] =>
-    val json: JsValue = Json.obj(
-      "id" -> id
-    )
-    Ok(json)
+    // En primer lugar creamos una variable para realizar la conexion con la BD
+    val conexion = db.getConnection()  
+    // A continuación inicializamos (vaciamos) la lista con la que procesaremos los datos que lleguen de la BD
+    var images = List[JsValue]()    
+    var services = List[String]() 
+    var room: JsValue = Json.obj()   
+    try{
+      val query = conexion.createStatement      
+      
+      val resultadoImages = query.executeQuery(s"SELECT url FROM room_images ri WHERE ri.roomId = $id;")      
+      while(resultadoImages.next){
+        val jsonImage: JsValue = Json.obj(
+          "url" -> resultadoImages.getString("url")
+        )
+        images = images :+ jsonImage
+      }      
+
+      val resultadoServices = query.executeQuery(s"SELECT DISTINCT name FROM services_per_room spr INNER JOIN services s ON spr.serviceId = s.id WHERE spr.roomId = $id;")     
+      while(resultadoServices.next){
+        val jsonService: String = resultadoServices.getString("name")
+        services = services :+ jsonService
+      } 
+
+      val resultadoRoom = query.executeQuery(s"SELECT DISTINCT * FROM rooms r INNER JOIN locations l ON r.locationId = l.id WHERE r.id = $id;")
+      while(resultadoRoom.next){
+        val jsonRoom: JsValue = Json.obj(
+          "id" -> resultadoRoom.getInt("r.id"),
+          "images" -> images,
+          "location" -> Json.obj(
+            "name" -> resultadoRoom.getString("l.name"),
+            "code" -> resultadoRoom.getString("l.code"),
+            "latitude" -> resultadoRoom.getDouble("l.latitude"),
+            "longitude" -> resultadoRoom.getDouble("l.longitude")
+          ),
+          "price" -> resultadoRoom.getDouble("r.price"),
+          "currency" -> "COP",
+          "agency" -> Json.obj(
+            "name" -> "Una Agencia",
+            "id" -> 1234,
+            "logo_url" -> "https://banner2.kisspng.com/20180606/yer/kisspng-play-framework-scala-software-framework-java-web-a-play-again-5b1896eec63338.1231269915283381588118.jpg"
+          ),
+          "property_name" -> resultadoRoom.getString("r.name"),
+          "rating" -> resultadoRoom.getDouble("r.rating"),
+          "services" -> services
+        )
+        room = jsonRoom   
+      }
+    }
+    finally{
+      // Antes de retornar los resultados, cerramos la conexión a la BD
+      conexion.close()
+    }
+    val jsonAux = Json.toJson(room) // Finalmente, se Jsifican los resultados
+    Ok(jsonAux) // Y se retorna la lista de habitaciones Jsificada    
   }
   
   //Service to search rooms available
