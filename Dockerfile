@@ -12,5 +12,7 @@ WORKDIR /RentRooms
 
 ADD . /RentRooms
 
+EXPOSE 9000
+
 CMD sbt run
 

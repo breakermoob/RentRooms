@@ -10,7 +10,11 @@ VALUES
   ('Medellin', 'MDE', 6.230833, -75.590553),
   ('Bogota', 'BOG', 4.624335, -74.063644),
   ('Cali', 'CLO', 3.359889, -76.638565),
-  ('Barranquilla', 'BAQ', 10.963889, -74.796387);
+  ('Barranquilla', 'BAQ', 10.963889, -74.796387),
+  ('Cartagena', 'CTG', 10.3997200, -75.5144400),
+  ('Cucuta', 'CUC', 7.8939100, -72.5078200),
+  ('Soledad', 'SLD', 10.0142900, -73.5522800),
+  ('Ibague', 'IBE', 4.435,-75.217);
 INSERT INTO `Rooms`(
     `name`,
     `locationId`,
@@ -21,54 +25,86 @@ INSERT INTO `Rooms`(
   )
 VALUES
   (
-    'Casita Cara',
+    'Vendo Casa Grande Santa Monica',
     1,
-    'Una Casita muy cara y muy maluca',
+    'Casa para 4 personas, muy comoda con multiples servicios incluidos',
     4.5,
     600000,
-    'https://d3fky3asuafjls.cloudfront.net/fHbOcDWDNHGJiAU2-L-QuOzoe-Y=/200x130/02/97/41/02974186.jpg'
+    'https://rentrooms.s3.amazonaws.com/MDE/MDE-1-tub.jpg'
   ),
   (
-    'Casita Buena',
+    'Hostal Bogota Real',
     2,
-    'Una Casita buena y barata',
-    10,
-    250000,
-    'https://d3fky3asuafjls.cloudfront.net/fHbOcDWDNHGJiAU2-L-QuOzoe-Y=/200x130/02/97/41/02974186.jpg'
+    'Hostal comodo y tranquilo con todos los servicios incluidos',
+    4.1,
+    350000,
+    'https://rentrooms.s3.amazonaws.com/BOG/BOG-1-tub.jpg'
   ),
   (
-    'Casita Pobre',
+    'Hilton Garden Inn Cali',
     3,
-    'Una Casita muy fea y pero humilde',
-    7.6,
-    75000,
-    'https://d3fky3asuafjls.cloudfront.net/fHbOcDWDNHGJiAU2-L-QuOzoe-Y=/200x130/02/97/41/02974186.jpg'
+    'Hotel de lujo con todos los servicios, sala de juntas, espacios de trabajo perzonalizados y con transporte las 24 horas',
+    5,
+    1200000,
+    'https://rentrooms.s3.amazonaws.com/CLO/CLO-1-tub.jpg'
+  ),
+  (
+    'Casa Bohemia Hotel',
+    5,
+    'Hotel comodo, un lugar ideal para descansar con tu familia, incluye todos los servicios; wifi, parqueadero, zona humeda, bar, etc',
+    3.5,
+    800000,
+    'https://rentrooms.s3.amazonaws.com/CTG/CTG-1-tub.jpg'
   );
 INSERT INTO `Room_Images`(`roomId`, `url`)
 VALUES
   (
     1,
-    'https://d3fky3asuafjls.cloudfront.net/4bhKa1iNdn5G-Ge864anLh6tkcI=/720x480/03/17/17/03171799.jpg'
+    'https://rentrooms.s3.amazonaws.com/MDE/MDE-1-1.jpg'
   ),
   (
     1,
-    'https://d3fky3asuafjls.cloudfront.net/Nfq4Z0vvbuvYgPQhoB4vlPLTiAI=/720x480/03/17/18/03171803.jpg'
+    'https://rentrooms.s3.amazonaws.com/MDE/MDE-1-2.jpg'
   ),
   (
     1,
-    'https://d3fky3asuafjls.cloudfront.net/3RgFAdn21O8sL_hNY9lVrSbglaA=/720x480/03/17/18/03171804.jpg'
+    'https://rentrooms.s3.amazonaws.com/MDE/MDE-1-3.jpg'
   ),
   (
     2,
-    'https://d3fky3asuafjls.cloudfront.net/4bhKa1iNdn5G-Ge864anLh6tkcI=/720x480/03/17/17/03171799.jpg'
+    'https://rentrooms.s3.amazonaws.com/BOG/BOG-1-1.jpg'
   ),
   (
     2,
-    'https://d3fky3asuafjls.cloudfront.net/Nfq4Z0vvbuvYgPQhoB4vlPLTiAI=/720x480/03/17/18/03171803.jpg'
+    'https://rentrooms.s3.amazonaws.com/BOG/BOG-1-2.jpg'
   ),
   (
     3,
-    'https://d3fky3asuafjls.cloudfront.net/4bhKa1iNdn5G-Ge864anLh6tkcI=/720x480/03/17/17/03171799.jpg'
+    'https://rentrooms.s3.amazonaws.com/CLO/CLO-1-1.jpg'
+  ),
+  (
+    3,
+    'https://rentrooms.s3.amazonaws.com/CLO/CLO-1-2.jpg'
+  ),
+  (
+    3,
+    'https://rentrooms.s3.amazonaws.com/CLO/CLO-1-3.jpg'
+  ),
+  (
+    3,
+    'https://rentrooms.s3.amazonaws.com/CLO/CLO-1-4.jpg'
+  ),
+  (
+    4,
+    'https://rentrooms.s3.amazonaws.com/CTG/CTG-1-1.jpg'
+  ),
+  (
+    4,
+    'https://rentrooms.s3.amazonaws.com/CTG/CTG-1-2.jpg'
+  ),
+  (
+    4,
+    'https://rentrooms.s3.amazonaws.com/CTG/CTG-1-3.jpg'
   );
 INSERT INTO `Services`(`id`, `name`)
 VALUES
@@ -81,17 +117,24 @@ VALUES
 INSERT INTO `Services_Per_Room`(`serviceId`, `roomId`)
 VALUES
   (1, 1),
-  (1, 2),
-  (1, 3),
   (2, 1),
   (3, 1),
-  (3, 2),
-  (4, 2),
+  (6, 1),
+  (1, 2),
+  (5, 2),
+  (6, 2),
+  (1, 3),
+  (2, 3),
+  (3, 3),
   (4, 3),
   (5, 3),
-  (6, 1),
-  (6, 2),
-  (6, 3);
+  (6, 3),
+  (1, 4),
+  (2, 4),
+  (3, 4),
+  (4, 4),
+  (5, 4),
+  (6, 4);
 
   INSERT INTO `Bookings`(
     `name`,
