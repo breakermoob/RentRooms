@@ -1,0 +1,14 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# https://www.playframework.com/documentation/latest/ScalaRouting
+# ~~~~
+
+# Rutas Rent&Rooms
+GET  /rooms  controllers.RoomController.getRooms
+
+# rooms
+GET     /rooms/search               controllers.RoomController.search(location: String, checkin: String, checkout: String)
+GET     /rooms/:id                  controllers.RoomController.detail(id: Long)
+
+# booking
+POST    /booking                    controllers.RoomController.booking
