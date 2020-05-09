@@ -145,11 +145,71 @@ class RoomController @Inject()(db: Database,cc: ControllerComponents) extends Ab
   
   //Service to search rooms available
   def booking = Action(parse.json) { implicit request =>
-    request.body.validate[Booking].map{ 
-      case success => Ok("json")
+    request.body.validate[Booking].map{       
+      case success => 
+        var nuevaReserva = request.body
+        val conexion = db.getConnection() 
+        var reserva: JsValue = Json.obj()
+
+        val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+
+        val qCheckin = dateFormat.parse(nuevaReserva("checkin").as[String])
+        val qCheckout = dateFormat.parse(nuevaReserva("checkout").as[String])           
+        if(qCheckin.compareTo(qCheckout) >= 0) {
+          BadRequest("Checkin date should be before checkout.")
+        }else{
+          if(qCheckin.compareTo(Calendar.getInstance().getTime()) < 0) {
+            BadRequest("Checkin date could not be in the past.")
+          }else{
+            try{            
+              val query = conexion.createStatement
+              val resultadosReservasQuery=query.executeQuery(s"SELECT * FROM bookings bo WHERE roomId = ${nuevaReserva("id_room")};")
+              var reservaOcupada = false
+              while(resultadosReservasQuery.next){
+                var checkinReservado = dateFormat.parse(resultadosReservasQuery.getString("bo.checkin"))
+                var checkoutReservado = dateFormat.parse(resultadosReservasQuery.getString("bo.checkout"))
+                if(((qCheckin.compareTo(checkinReservado) >= 0) && (qCheckin.compareTo(checkoutReservado) <= 0)) 
+                  || ((qCheckout.compareTo(checkinReservado) >= 0) && (qCheckout.compareTo(checkoutReservado) <= 0)) 
+                  || ((qCheckin.compareTo(checkinReservado) <= 0) && (qCheckout.compareTo(checkoutReservado) >= 0))){
+                  reservaOcupada = true
+                }                 
+              }
+              if(reservaOcupada == true){
+                BadRequest("Occupied room.")
+              }else{
+                val resultadoInsert = query.executeUpdate(s"INSERT INTO bookings (`name`, `email`, `checkin`, `checkout`, `roomId`) " +
+                s"VALUES ( '${nuevaReserva("name").as[String]}', '${nuevaReserva("email").as[String]}', '${nuevaReserva("checkin").as[String]}', '${nuevaReserva("checkout").as[String]}', ${nuevaReserva("id_room")})") 
+                val resultadoBusqueda = query.executeQuery("SELECT * FROM bookings b WHERE (SELECT LAST_INSERT_ID())=b.id")
+                while(resultadoBusqueda.next){
+                  val checkin = resultadoBusqueda.getString("b.checkin").substring(0, 10)
+                  val checkout = resultadoBusqueda.getString("b.checkout").substring(0, 10)
+                  val json: JsValue = Json.obj(
+                    "id_booking" -> resultadoBusqueda.getInt("b.id"),
+                    "checkin" -> checkin,
+                    "checkout" -> checkout,
+                    "email" -> resultadoBusqueda.getString("b.email"),
+                    "name" -> resultadoBusqueda.getString("b.name"),
+                    "id_room" -> resultadoBusqueda.getInt("b.roomId"),
+                  )
+                  reserva = json
+                }
+                val jsonAux = Json.toJson(reserva) // Finalmente, se Jsifican los resultados
+                Ok(jsonAux) // Y se retorna la lista de habitaciones Jsificada  
+              }
+            }
+            finally{
+              // Antes de retornar los resultados, cerramos la conexión a la BD
+              conexion.close()
+            }
+            
+          }
+        }
+        
+
+        
       case e:JsError => BadRequest("No se pudo actualizar porque hay malos parametros!!")
     }.recoverTotal{
-      e => BadRequest("Detected error:"+ e + request.body)
+      e:JsError => BadRequest("No se pudo actualizar porque hay malos parametros!!")
     }
   }
 }
