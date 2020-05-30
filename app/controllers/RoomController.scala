@@ -56,7 +56,7 @@ class RoomController @Inject()(db: Database,cc: ControllerComponents) extends Ab
             
             if (bookingsRes == Nil) {
               val json: JsValue = Json.obj(
-                "id" -> roomId,
+                "id" -> rooms.getString(roomId),
                 "thumbnail" -> rooms.getString("r.thumbnail"),
                 "location" -> Json.obj(
                   "name" -> rooms.getString("l.name"),
@@ -123,7 +123,7 @@ class RoomController @Inject()(db: Database,cc: ControllerComponents) extends Ab
       val resultadoRoom = query.executeQuery(s"SELECT DISTINCT * FROM Rooms r INNER JOIN Locations l ON r.locationId = l.id WHERE r.id = $id;")
       while(resultadoRoom.next){
         val jsonRoom: JsValue = Json.obj(
-          "id" -> resultadoRoom.getInt("r.id"),
+          "id" -> resultadoRoom.getString("r.id"),
           "images" -> images,
           "location" -> Json.obj(
             "name" -> resultadoRoom.getString("l.name"),
@@ -194,7 +194,7 @@ class RoomController @Inject()(db: Database,cc: ControllerComponents) extends Ab
                   val checkin = resultadoBusqueda.getString("b.checkin").substring(0, 10)
                   val checkout = resultadoBusqueda.getString("b.checkout").substring(0, 10)
                   val json: JsValue = Json.obj(
-                    "id_booking" -> resultadoBusqueda.getInt("b.id"),
+                    "id_booking" -> resultadoBusqueda.getString("b.id"),
                     "checkin" -> checkin,
                     "checkout" -> checkout,
                     "email" -> resultadoBusqueda.getString("b.email"),
