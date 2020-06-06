@@ -12,3 +12,4 @@ GET     /rooms/:id                  controllers.RoomController.detail(id: Long)
 
 # booking
 POST    /booking                    controllers.RoomController.booking
+GET     /booking/:email             controllers.RoomController.getBooking(email: String)

@@ -5,5 +5,6 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala).settings(
     scalaVersion := "2.12.3",
     libraryDependencies += guice,
     libraryDependencies += jdbc,
-    libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.41"
+    libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.41",
+    libraryDependencies += "com.google.firebase" % "firebase-admin" % "6.8.1"
   )
